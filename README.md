@@ -8,6 +8,23 @@ It's plain Claude Code — no MCP, no services, no lock-in. Drop it into any pro
 
 ---
 
+## First, the thing most people miss: Claude Code has a Workflow tool
+
+Claude Code ships a **`Workflow`** tool that almost nobody talks about. It lets you orchestrate many Claude subagents **deterministically** from a plain-JavaScript script — real control flow (loops, conditionals, fan-out), not one model improvising a plan.
+
+The whole API is a handful of primitives you call inside a script:
+
+- **`agent(prompt, opts)`** — spawn one subagent; returns its result. Pass a JSON `schema` and you get back a validated object instead of text.
+- **`parallel([...thunks])`** — run agents concurrently, wait for all (a barrier).
+- **`pipeline(items, stage1, stage2, ...)`** — run each item through every stage independently, no barrier between stages (each item flows as fast as it can).
+- **`phase(title)` / `log(msg)`** — group and narrate progress.
+
+You save a script as a *named workflow* under `.claude/workflows/`, then run it by asking Claude to. It's **opt-in** — it only fires when you invoke it, so it never quietly spawns a fleet of agents. Watch it live with `/workflows`.
+
+That's the engine. **`fable-class` is one recipe built on it** — proof that the real leverage isn't a bigger model, it's how you wire the agents together. Read [`.claude/workflows/fable-class.js`](.claude/workflows/fable-class.js) and you'll see the whole pattern in ~120 lines; fork it into your own recipes.
+
+---
+
 ## What's in it
 
 | Piece | File | What it does |
